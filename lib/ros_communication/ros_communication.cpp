@@ -26,7 +26,7 @@ void RosCommunication::initialize(){
 
 
     // Adding Wifi
-    IPAddress agent_ip(192, 168, 14, 150);
+    IPAddress agent_ip(192, 168, 23, 150);
     size_t agent_port = 8888;
 
     char ssid[] = "Nokia 6.1";
@@ -69,16 +69,19 @@ void RosCommunication::subscriber_define(){
 
 void RosCommunication::cmd_vel_callback(const void *msg_recv){
     const geometry_msgs__msg__Twist * recieved_data = (const geometry_msgs__msg__Twist *) msg_recv ;
-    float linear_vel = recieved_data->linear.x;
-    float angular_vel = recieved_data->angular.z;
+    float linear_pose_x = recieved_data->linear.x;
+    float linear_pose_y = recieved_data->linear.y;
 
-    Serial.print(linear_vel);Serial.print(" / ");Serial.println(angular_vel);
 
-    if(linear_vel > 0) {
-        Serial.println("Forward");
-        // forward(linear_vel * 255);
-        // drawForwardArrow(display);
-        stepper_loop();
+    if(linear_pose_x > 0) {
+        Serial.println("Moving");
+        Serial.print("linear x pose ");
+        Serial.println(linear_pose_x);
+        Serial.print("linear y pose ");
+        Serial.println(linear_pose_y);
+
+        stepper_loop(linear_pose_x);
+
         // Publish "start" on /pick after stepper finishes
         // Assign string properly
         if (!rosidl_runtime_c__String__assign(&pick_msg.data, "start")) {
