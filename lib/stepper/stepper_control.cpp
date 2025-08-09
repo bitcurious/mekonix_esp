@@ -45,16 +45,60 @@ void run_motor_2(unsigned long duration, unsigned long startTime) {
     
 }
 
+bool go_to_home_position() {
+
+    int adcValue = analogRead(HOME_M1); // raw ADC value (0-4095)
+    int adcValue1 = analogRead(HOME_M2); // raw ADC value (0-4095)
+    // Convert to voltage (ESP32 default ADC reference = 3.3V)
+    float voltage = adcValue * (3.3 / 4095.0);
+    float voltage1 = adcValue1 * (3.3 / 4095.0);
+
+    Serial.print("ADC Value: ");
+    Serial.print(adcValue);
+    Serial.print(" | Voltage: ");
+    Serial.println(voltage, 3);
+    if (voltage < 3)
+    {
+        // Move motor 1 to home position
+        digitalWrite(DIR_PIN, HIGH);  // Set direction for Motor 1
+        unsigned long home_m1_time = millis();
+        run_motor_1(20, home_m1_time);
+    }
+
+    delay(50);
+
+    Serial.print("ADC Value1: ");
+    Serial.print(adcValue1);
+    Serial.print(" | Voltage1: ");
+    Serial.println(voltage1, 3);
+    if (voltage1 < 3)
+    {
+        // Move motor 2 to home position
+        digitalWrite(DIR_PIN_M2, LOW); // Set direction for Motor 2
+        unsigned long home_m2_time = millis();
+        run_motor_2(20, home_m2_time);
+    }
+
+    if (voltage > 3 && voltage1 > 3) {
+        Serial.println("Motors moved to home position");
+        return true;
+    }
+    return false;
+    
+}
+
 
 void stepper_loop() {
 
-    //led code
-    // digitalWrite(LED_BUILTIN, HIGH);  // Turn LED on
-    // delay(500);  // Wait 500ms
-    // digitalWrite(LED_BUILTIN, LOW);   // Turn LED off
-    // delay(500);  // Wait 500ms
 
     Serial.println("Stepper loop started");
+
+    Serial.println("Moving to home position");
+    while (!go_to_home_position()) {
+        Serial.println("Waiting for motors to reach home position...");
+        delay(500);  // Wait before checking again
+    }
+
     Serial.println("Picking the object");
     // Move forward motor 1
     digitalWrite(DIR_PIN, LOW);  // Forward direction for Motor 1
