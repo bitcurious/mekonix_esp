@@ -26,7 +26,7 @@ void RosCommunication::initialize(){
 
 
     // Adding Wifi
-    IPAddress agent_ip(192, 168, 14, 150);
+    IPAddress agent_ip(10, 60, 75, 200);
     size_t agent_port = 8888;
 
     char ssid[] = "Nokia 6.1";

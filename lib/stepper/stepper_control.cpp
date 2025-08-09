@@ -57,32 +57,43 @@ void stepper_loop() {
     Serial.println("Stepper loop started");
     Serial.println("Picking the object");
     // Move forward motor 1
-    digitalWrite(DIR_PIN, HIGH);  // Forward direction for Motor 1
+    digitalWrite(DIR_PIN, LOW);  // Forward direction for Motor 1
     unsigned long startTime = millis();
     run_motor_1(RUN_TIME_M1, startTime);
     digitalWrite(RELAY_PIN, HIGH);
 
-    delay(5000);  // Pause before changing direction
+    delay(2000);  // Pause before changing direction
+
+    digitalWrite(DIR_PIN_M2, HIGH); // Forward direction for Motor 2
+    unsigned long pick_time = millis();
+    run_motor_2(50, pick_time);
+
+    delay(500);
+
+    // Move forward motor 1
+    digitalWrite(DIR_PIN_M2, LOW); // Reverse direction for Motor 2
+    unsigned long pick_time_1 = millis();
+    run_motor_2(50, pick_time_1);
+    delay(500);
 
     // Move backward motor 1
-    digitalWrite(DIR_PIN, LOW);  // Reverse direction for Motor 1
+    digitalWrite(DIR_PIN, HIGH);  // Reverse direction for Motor 1
     unsigned long startTime_2 = millis();
     run_motor_1(RUN_TIME_M1, startTime_2);
     Serial.println("Object Picked");
     delay(1000);
     Serial.println("Placing the object");
     // Move forward motor 2
-    digitalWrite(DIR_PIN_M2, LOW); // Forward direction for Motor 2
+    digitalWrite(DIR_PIN_M2, HIGH); // Forward direction for Motor 2
     unsigned long startTime_3 = millis();
     run_motor_2(RUN_TIME, startTime_3);
 
     delay(1000);
-
+    digitalWrite(RELAY_PIN, LOW);
     // Move forward motor 1
-    digitalWrite(DIR_PIN_M2, HIGH); // Reverse direction for Motor 2
+    digitalWrite(DIR_PIN_M2, LOW); // Reverse direction for Motor 2
     unsigned long startTime_4 = millis();
     run_motor_2(RUN_TIME, startTime_4);
-    digitalWrite(RELAY_PIN, LOW);
     Serial.println("Object placed");
     delay(1000);  // Pause before next cycle
 }

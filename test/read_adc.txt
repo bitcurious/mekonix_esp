@@ -1,0 +1,23 @@
+// ESP32 Analog Input Example
+// Reads voltage from pin 34 and prints to Serial Monitor
+
+const int analogPin = 34; // ADC1 channel, input-only pin
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000); // give serial monitor time to start
+}
+
+void loop() {
+  int adcValue = analogRead(analogPin); // raw ADC value (0-4095)
+  
+  // Convert to voltage (ESP32 default ADC reference = 3.3V)
+  float voltage = adcValue * (3.3 / 4095.0);
+
+  Serial.print("ADC Value: ");
+  Serial.print(adcValue);
+  Serial.print(" | Voltage: ");
+  Serial.println(voltage, 3);
+
+  delay(500);
+}
